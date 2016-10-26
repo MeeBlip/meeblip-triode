@@ -1,5 +1,5 @@
 ;-------------------------------------------------------------------------------------------------------------------
-; Meeblip triode	Version 1.00
+; Meeblip triode	
 ;
 ;
 ;-------------------------------------------------------------------------------------------------------------------
@@ -71,6 +71,9 @@ INTRX_ACPT_X:
 ;MIDI data byte (0xxxxxxx):
 INTRX_DATA:
             lds	    r17, MIDIPHASE
+			tst		r17					; Check if MIDIPHASE is zero. If so, exit immediately
+			breq	INTRX_ACPT_X		; Which will jump us to INTRX_EXIT
+
 		    cpi	    r17, 0x80		    ;\
 		    breq	INTRX_NOFF1		    ; \
 		    cpi	    r17, 0x81		    ; / note off

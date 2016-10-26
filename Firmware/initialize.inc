@@ -1,5 +1,6 @@
 ;-------------------------------------------------------------------------------------------------------------------
-; Meeblip triode		Version 1.00
+; Meeblip triode		
+;
 ;
 ;-------------------------------------------------------------------------------------------------------------------
 ; Initialization
@@ -101,6 +102,9 @@ RESET:
 			sts		KNOB4_STATUS, r16		; = 1
 			sts		KNOB5_STATUS, r16		; = 1
 			sts		KNOB6_STATUS, r16		; = 1
+
+			ldi		r16, 8
+			sts		MAXMIDI, r16
 					
 			; default ENV MOD to 24 
 			ldi		r16, 24
@@ -216,12 +220,13 @@ RESET:
 		    rcall	ADC_START
 
 ; Load MIDI channel from eeprom
-
 			ldi		r18, $03
 			ldi		r17, $FF				; Set eeprom address to $03FF (last byte)
 			rcall   EEPROM_READ				; load MIDI CHANNEL into r16
-			cpi		r16, 5					
-			brlo	LOAD_MIDI_CHANNEL		; If stored MIDI Channel is not Channel 1-4, set synth into MIDI OMNI mode.
+			lds		r22, MAXMIDI			
+			inc		r22						; Maximum MIDI channel + 1
+			cp		r16, r22					
+			brlo	LOAD_MIDI_CHANNEL		; If stored MIDI Channel is not within range, set synth into MIDI OMNI mode.
 			ldi		r16, 0			
 LOAD_MIDI_CHANNEL:
 			sts		SETMIDICHANNEL, r16

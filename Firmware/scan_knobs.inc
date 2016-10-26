@@ -1,5 +1,5 @@
 ;-------------------------------------------------------------------------------------------------------------------
-; Meeblip triode		Version 1.00
+; Meeblip triode		
 ;
 ;
 ;-------------------------------------------------------------------------------------------------------------------
@@ -112,10 +112,6 @@ CHECK_3:
 			breq	EXIT_CHECK3			; Skip update if pot hasn't been updated
 			sts     PORTAMENTO_KNOB, r16
 
-			lds		r17, FIRMWARE
-			sbrs	r17, 0	
-			sts		PORTAMENTO, r16		; If we're running wavetable firmware, don't update portamento using knob
-
 			; Check if MIDI set switch has been pressed. If so, set MIDI CHANNEL
 			lds		r16, BUTTON_STATUS
 			tst		r16
@@ -126,22 +122,17 @@ CHECK_3:
 			rcall	SET_MIDI_CHANNEL
 
 EXIT_CHECK3:
-			lds		r16, PORTAMENTO_KNOB	; grab the patch value, just in case it hasn't been updated
+			lds		r16, PORTAMENTO_KNOB ; grab the patch value, just in case it hasn't been updated
+			lds		r17, FIRMWARE
+			sbrs	r17, 0	
+			sts		PORTAMENTO, r16		; If we're running wavetable firmware, don't update portamento using knob
 
-			mov		r17,r16				; Copy the pulse knob value to select wavetable if in wavetable mode 
-			lsr		r17					; 0..127
-			lsr		r17					; 0..63
-			lsr		r17					; 0..31
-			lsr		r17					; 0..15
-			lsr		r17					; 0..8
-			sts		WAVETABLE, r17		; Knob value selects one of 8 wavetables
-
-			cpi		r16, 10
-			brlo	CHECK_3LIMIT
-			rjmp	CHECK_3A
-CHECK_3LIMIT:
-			ldi		r16, 10				; Limit minimum Pulse width to 10
-CHECK_3A:
+			lsr		r16					; 0..127
+			lsr		r16					; 0..63
+			lsr		r16					; 0..31
+			lsr		r16					; 0..15
+			lsr		r16					; 0..8
+			sts		WAVETABLE, r16		; Knob value selects one of 8 wavetables
 			rjmp	END_POTS
 
 CHECK_4:								; Filter resonance

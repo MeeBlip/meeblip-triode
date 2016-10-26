@@ -1,5 +1,5 @@
 ;-------------------------------------------------------------------------------------------------------------------
-; Meeblip triode		Version 1.00
+; Meeblip triode		
 ;
 ;
 ;-------------------------------------------------------------------------------------------------------------------
@@ -17,7 +17,7 @@ MIDICC:         		.byte $80 		; 128 bytes reserved in RAM for table
   .equ PANEL_LFOLEVEL 	= MIDICC + 48 
   .equ LFOFREQ			= MIDICC + 49
   .equ OSC_DETUNE 		= MIDICC + 50
-  .equ PORTAMENTO		= MIDICC + 51
+  .equ PORTAMENTO_KNOB	= MIDICC + 51
   .equ RESONANCE		= MIDICC + 52
   .equ CUTOFF 			= MIDICC + 53
   .equ KNOB_DCF_DECAY 	= MIDICC + 54
@@ -27,6 +27,7 @@ MIDICC:         		.byte $80 		; 128 bytes reserved in RAM for table
   .equ PULSE_KNOB_LIMITED = MIDICC + 58 ; Not on front panel, but available through MIDI CC
   .equ KNOB_DCF_ATTACK	  = MIDICC + 59 ; Not on front panel, but available through MIDI CC
   .equ KNOB_AMP_ATTACK	  = MIDICC + 60 ; Not on front panel, but available through MIDI CC
+  .equ PORTAMENTO		= MIDICC + 61 ; Portamento control when in Wavetable mode
   
   ; Panel switches 0..7
   ; Switches 1

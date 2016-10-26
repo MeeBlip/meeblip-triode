@@ -12,6 +12,10 @@
 ;
 ;Change log
 ;
+;V1.01 2016.10.24 - Ensure MIDI channel settings are saved correctly when powered off for Channel 1-8 (implement MAXMIDI variable)
+;				  - Allow MIDI CC control of GLIDE knob to select waves when in wavetable mode (CC 61 now controls GLIDE in wavetable mode)
+;				  - Updated MIDI code to exit interrupt immediately if MIDI command is unrecognized
+;				  - Increased front panel switch scanning rate (10X faster)
 ;V1.00 2016.10.19 - Initial release
 ;
 ;-------------------------------------------------------------------------------------------------------------------
@@ -26,6 +30,9 @@
 ;	2. If you remix, transform, or build upon the material, you must distribute your contributions under the same license 
 ;	   as the original. That means making source code, design files and PC board layout files available so someone can 
 ;	   build and modify their own version of the project. 
+;
+;	3. The MeeBlip name is our intellectual property. You are not allowed to release commercial devices based
+;	   on our designs using the MeeBlip brand name. 
 ; 	
 ; 	Here's are links to the Creative Commons license, for the design:
 ; 	http://creativecommons.org/licenses/by-sa/4.0/
@@ -76,7 +83,7 @@
 
                     .SET cpu_frequency = 16000000
                     .SET baud_rate     = 31250
-		            .SET KBDSCAN       = 6250	
+		            .SET KBDSCAN       = 625	; was 6250
 
 ;-------------------------------------------------------------------------------------------------------------------
 ;			V A R I A B L E S   &  D E F I N I T I O N S

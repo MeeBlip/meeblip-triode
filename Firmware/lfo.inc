@@ -1,5 +1,5 @@
 ;-------------------------------------------------------------------------------------------------------------------
-; Meeblip triode	Version 1.00
+; Meeblip triode	
 ;
 ;
 ;-------------------------------------------------------------------------------------------------------------------
@@ -11,7 +11,6 @@
 
 ;calculate dA:
 			lds	    r16, LFOFREQ	    ;\
-
 			lds	    r17, PATCH_SWITCH1	; Check LFO destination bit. 
 		    sbrs	r17, SW_LFO_DEST	; DCF is 0, DCO is 1
 			rjmp	MLP_LFO_NOLIMIT		; Don't limit knob if destination is oscillators

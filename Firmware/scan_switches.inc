@@ -1,5 +1,5 @@
 ;-------------------------------------------------------------------------------------------------------------------
-; Meeblip triode		Version 1.00
+; Meeblip triode		
 ;
 ;
 ;-------------------------------------------------------------------------------------------------------------------
@@ -16,9 +16,9 @@
 		    sub	    r16, r18			;\
 		    sbc	    r17, r19			;/ r17:r16 = t - t0
 		    subi	r16, LOW(KBDSCAN)	;\
-		    sbci	r17, HIGH(KBDSCAN)	;/ r17:r16 = (t-t0) - 100ms
+		    sbci	r17, HIGH(KBDSCAN)	;/ r17:r16 = (t-t0) - 10ms
 		    brsh	MLP_SCAN		    ;\
-		    rjmp	MLP_SKIPSCAN		;/ skip scanning if (t-t0) < 100ms
+		    rjmp	MLP_SKIPSCAN		;/ skip scanning if (t-t0) < 10ms
 
 MLP_SCAN:
 

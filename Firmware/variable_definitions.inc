@@ -1,5 +1,5 @@
 ;-------------------------------------------------------------------------------------------------------------------
-; Meeblip triode		Version 1.00
+; Meeblip triode		
 ;
 ;
 ;-------------------------------------------------------------------------------------------------------------------
@@ -52,6 +52,7 @@ LFONOTE:			.BYTE 1
 MIDINOTEPREV:	    .BYTE 1		        ; buffer for MIDI note
 MIDIPBEND_L:        .BYTE 1		        ;\
 MIDIPBEND_H:        .BYTE 1		        ;/ -32768..+32766
+MAXMIDI:			.BYTE 1				; Maximum MIDI channel
 
 ;current sound parameters:
 LFOLEVEL:	        .BYTE 1	            ; 0..255
@@ -173,7 +174,6 @@ DCOB_LEVEL:			.BYTE 1
 
 KNOB_DEADZONE:		.BYTE 1
 SLIDE:				.BYTE 1
-PORTAMENTO_KNOB:	.BYTE 1
 
 ; increase phase for DCO A
 DELTAA_0: .byte 1
