@@ -105,6 +105,9 @@ PULSE_OSCA:
 SAW_OSCA:
 			lds		r22, WAVETABLE_A			; Load wavetable offset 0..11
 
+			cpi		r22, 5					
+			brlo	RAW_SAWA					; Use raw wave if we're playing wavetable 0..4
+
 			; anti-aliased sawtooth
 DCOA_SAW:
 												; Offset to the correct wavetable in r22, based on note number (0..11)
@@ -119,14 +122,16 @@ RAW_SAWA:
 
 PULSEA:											
 			lds		r22, WAVETABLE_A			; Load wavetable offset 0..11
+			cpi		r22, 5					
+			brlo	RAW_PULSE					; Use raw wave if we're playing wavetable 0..4
 
 				; r17 phase
 				; r18 temp
 				; r23 pulse width
 				; r22 wavetable
 				; get sample a into r17
-			ldi		ZL, low (2*INV_SAW0)		; Load low part of byte address into ZL
-			ldi		ZH, high(2*INV_SAW0)		; Load high part of byte address into ZH
+			ldi		ZL, low (2*SQ_LIMIT0)		; Load low part of byte address into ZL
+			ldi		ZH, high(2*SQ_LIMIT0)		; Load high part of byte address into ZH
 			add		ZL, r17						; Offset the wavetable by the ramp phase (i)
 			adc		ZH, r22						; Wavetable 0..11
 			lpm									; Load wave(i) into r0
@@ -135,8 +140,8 @@ PULSEA:
 			mov		r18, r23					; Grab a copy of the pulse width
 			add		r18, r17					; Add phase offset for second table (pulse width + original sample)
 			mov		r17, r0						; store previous sample in r17
-			ldi		ZL, low (2*INV_SAW0)		; Load low part of byte address into ZL
-			ldi		ZH, high(2*INV_SAW0)		; Load high part of byte address into ZH
+			ldi		ZL, low (2*SQ_LIMIT0)		; Load low part of byte address into ZL
+			ldi		ZH, high(2*SQ_LIMIT0)		; Load high part of byte address into ZH
 			add		ZL, r18						; Add phase offset for second table.
 			adc		ZH, r22						; Wavetable 0..15
 			lpm									; Load wave(i) into r0
@@ -200,6 +205,9 @@ PULSE_OSCB:
 SAW_OSCB:
 			lds		r22, WAVETABLE_B			; Load wavetable offset 0..11
 
+			cpi		r22, 5					
+			brlo	RAW_SAWB					; Use raw wave if we're playing wavetable 0..4
+
 			; anti-aliased sawtooth
 DCOB_SAW:
 												; Offset to the correct wavetable in r22, based on note number (0..11)
@@ -218,13 +226,16 @@ RAW_SAWB:
 PULSEB:																					
 			lds		r22, WAVETABLE_B			; Load wavetable offset 0..11
 
+			cpi		r22, 5					
+			brlo	RAW_PULSEB					; Use raw wave if we're playing wavetable 0..4
+
 				; r16 phase
 				; r18 temp
 				; r23 pulse width
 				; r22 wavetable
 				; get sample a into r17
-			ldi		ZL, low (2*INV_SAW0)		; Load low part of byte address into ZL
-			ldi		ZH, high(2*INV_SAW0)		; Load high part of byte address into ZH
+			ldi		ZL, low (2*SQ_LIMIT0)		; Load low part of byte address into ZL
+			ldi		ZH, high(2*SQ_LIMIT0)		; Load high part of byte address into ZH
 			add		ZL, r16						; Offset the wavetable by the ramp phase (i)
 			adc		ZH, r22						; Wavetable 0..15
 			lpm									; Load wave(i) into r0
@@ -233,8 +244,8 @@ PULSEB:
 			mov		r18, r23					; Grab a copy of the pulse width
 			add		r18, r16					; Add phase offset for second table (pulse width + original sample)
 			mov		r16, r0						; store previous sample in r17
-			ldi		ZL, low (2*INV_SAW0)		; Load low part of byte address into ZL
-			ldi		ZH, high(2*INV_SAW0)		; Load high part of byte address into ZH
+			ldi		ZL, low (2*SQ_LIMIT0)		; Load low part of byte address into ZL
+			ldi		ZH, high(2*SQ_LIMIT0)		; Load high part of byte address into ZH
 			add		ZL, r18						; Add phase offset for second table.
 			adc		ZH, r22						; Wavetable 0..15
 			lpm									; Load wave(i) into r0
@@ -266,9 +277,6 @@ PULSE_ZEROB:
 			ldi		r16, $FF					; Set pulse to top
 EXIT_PULSEB:
 			subi    r16, $80					; sign oscillator B
-
-			
-			;ldi		r16, $80	; silence osc b (test)
 
 ;-------------------------------------------------------------------------------------------------------------------
 ; Sum Oscillators
@@ -394,6 +402,18 @@ MUXCEND:
 
 PRE_DCF:
 
+; Gate oscillators A&B when the envelope is fully closed.
+
+			lds		r30, OSC_GATE
+			tst		r30
+			brne	PRE_DCF2	; If OSC_GATE = 0, disable oscillators
+
+			ldi		r17, $80	; silence osc a 
+			ldi		r16, $80	; silence osc b 
+
+
+PRE_DCF2:
+
 ; Finish loading resonance or envelope level, pull CS high. 	
 			sbrc	MULTIPLEX, 0
 			rjmp	MUXD
@@ -416,8 +436,11 @@ MUXDEND:
 
 			lds	    r30, PATCH_SWITCH1	; octave B: 1=down, 0=up
 			sbrs	r30, SW_SUBOSC		    
-			rjmp	DCF
+			rjmp	DCF					; if SUB OSC switch is off, skip sub calculations
 
+			lds		r30, OSC_GATE
+			tst		r30
+			breq	DCF					; If OSC_GATE = 0, skip sub calculations
 SUBOSC:
 
 			mov	    r30, PHASEA_2				; Get OSC A sawtooth value
@@ -471,8 +494,9 @@ DCF:
             asr	    r17		            ;\
 		    ror	    r16		            ;/ r17:r16 = r17:r16 asr 1
 
+			movw	r30, r16 ; make sure we have our audio in r31:30
 			
-.INCLUDE "digital_filter.inc"	
+;.INCLUDE "digital_filter.inc"	; disabled digital filter
 				
 				
 ;-------------------------------------------------------------------------------------------------------------------
@@ -484,6 +508,7 @@ DCF:
 ;-------------------------------------------------------------------------------------------------------------------
 ;
 
+/*
 DCA:
 			lds		r18, level
 			cpi		r18, 255
@@ -493,7 +518,11 @@ DCA:
 			mul		r16, r18		; multipliy samples low byte
 			add		r30, r1
 			adc		r31, ZERO		
+
 T2_AEXIT:
+*/
+
+
 
 
 ;-------------------------------------------------------------------------------------------------------------------
@@ -528,7 +557,6 @@ T2_AEXIT:
 			lsl		r30		; shift 4 bits left
 			rol		r16		; rotate through r16
 			rol		r17		; and into r17
-
 
 ; Shift most significant byte into SPI register 
 			out		SPDR, r17

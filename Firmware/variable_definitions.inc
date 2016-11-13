@@ -197,6 +197,7 @@ PULSE_WIDTH:		.byte 1
 ; Sub-oscillator
 OLD_OSCA:			.byte 1
 SUB_OSC:			.byte 1
+OSC_GATE:			.byte 1
 
 ; fm
 WAVEB:	  .byte 1

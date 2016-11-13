@@ -141,10 +141,18 @@ CHECK_4:								; Filter resonance
 			rcall	POT_SCAN			; If so, check if parameter should be updated with pot value in r16
 			tst		r17					
 			breq	CHECK4_EXIT				; Skip update if pot hasn't been updated
-			cpi		r16, 0
-			brne	CHECK_4A
-			ldi		r16, 1
+			;cpi		r16, 0
+			;brne	CHECK_4A
+			;ldi		r16, 1
 CHECK_4A:
+
+			; scaling
+			lsr		r16					; 50%
+			mov		r17, r16
+			lsr		r16					; 25%
+			add		r16, r17			; 50% + 25%
+			ldi		r17, 64
+			add		r16, r17			; Add the value scaled to 75% + 64. 
 			sts	    RESONANCE,r16	
 			
 			; Check if MIDI set switch has been pressed. If so, set MIDI CHANNEL
@@ -167,6 +175,14 @@ CHECK_5:
 			rcall	POT_SCAN			; If so, check if parameter should be updated with pot value in r16
 			tst		r17					
 			breq	EXIT_CHECK5				; Skip update if pot hasn't been updated
+			
+			; scaling
+			lsr		r16					; 50%
+			mov		r17, r16
+			lsr		r16					; 25%
+			add		r16, r17			; 50% + 25%
+			ldi		r17, 64
+			add		r16, r17			; Add the value scaled to 75% + 64. 
 			sts	    CUTOFF,r16	
 			
 			; Check if MIDI set switch has been pressed. If so, set MIDI CHANNEL
@@ -199,13 +215,14 @@ CHECK_6:
 
 CHECK_6B:
 			lds	    r16, KNOB_DCF_DECAY 		; Grab the value, in case it hasn't been updated (IE: MIDI CC parameter update)
-			lds		r19, PATCH_SWITCH1			
-			rjmp	DCF_SUSTAIN_OFF				; Skip if sustain is off...
-			ldi		r19, 255					; Sustain is on, so...
-			sts		SUSTAINLEVEL2, r19			; Set sustain to maximum
-			sts		DECAYTIME2, r19				; Set decay to maximum
-			sts		RELEASETIME2, r16			; Set release time to value of decay knob
-			rjmp	END_POTS
+			;lds		r19, PATCH_SWITCH1	
+			;sbrs	r19, SW_SUSTAIN			
+			;rjmp	DCF_SUSTAIN_OFF				; Skip if sustain is off...
+			;ldi		r19, 255					; Sustain is on, so...
+			;sts		SUSTAINLEVEL2, r19			; Set sustain to maximum
+			;sts		DECAYTIME2, r19				; Set decay to maximum
+			;sts		RELEASETIME2, r16			; Set release time to value of decay knob
+			;rjmp	END_POTS
 
 DCF_SUSTAIN_OFF:
 			ldi		r19, 0						; Sustain is off, so...		

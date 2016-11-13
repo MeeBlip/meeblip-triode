@@ -35,7 +35,7 @@ RESET:
 			clr 	z_H					;
 			clr 	temp				;
 			clr 	temp2				;
-			ldi		r16, 5
+			ldi		r16, 3
 			sts 	KNOB_DEADZONE, r16	
 		    ldi	    r16, 0
 			sts		BUTTON_STATUS, r16	; no buttons pressed
@@ -136,8 +136,10 @@ RESET:
 			sts		PORTAMENTO, r16
 			sts		KNOB_AMP_ATTACK, r16	; Set amplitude envelope attack = 0
 			sts		KNOB_DCF_ATTACK, r16	; Set filter envelope attack = 0
+			sts		OSC_GATE, r16			; Turn off oscillators
 			ldi		r16, 100
 			sts		VCFENVMOD, r16		; Default VCFENVMOD to 100 unless overridden by MIDI CC
+			
 
 ;initialize port A:
 		    ldi	    r16, 0x00    		;\

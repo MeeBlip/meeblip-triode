@@ -12,10 +12,25 @@
 ;
 ;Change log
 ;
+;V1.10 2016.11.12 - Updated MIDI code to exit interrupt immediately if MIDI command is unrecognized
+;				  - Increased front panel switch scanning rate (10X faster)
+;				  - Reduced pitchbend to ± 3 semitones
+;				  - Altered filter decay envelope to ignore SUSTAIN switch so that filter sweeps continue when key is released
+;				  - Removed digital pre-filtering code (previously used on OSC A&B)
+;				  - Removed digital enveloping of OSC A & B
+;				  - Gate oscillators when amplitude envelope hits zero (prevents audio bleed through)
+;				  - Changed filter cutoff curve (use table from MeeBlip SE)
+;				  - Scale filter cutoff knob to cover 25%-100% of knob range
+;				  - Scale filter resonance knob to cover 25%-100% of knob range
+;				  - Added bandlimited square wave tables (pulse waves were previously generated with offset sawtooth ramps)
+;				  - Raw calculated waveforms are now used in the lower 4 octaves, then switch to bandlimited wavetables. 
+;				  -Flipped waveforms to match phase and avoid a pop when crossing the cut-over point
+ 
 ;V1.01 2016.10.24 - Ensure MIDI channel settings are saved correctly when powered off for Channel 1-8 (implement MAXMIDI variable)
 ;				  - Allow MIDI CC control of GLIDE knob to select waves when in wavetable mode (CC 61 now controls GLIDE in wavetable mode)
 ;				  - Updated MIDI code to exit interrupt immediately if MIDI command is unrecognized
 ;				  - Increased front panel switch scanning rate (10X faster)
+
 ;V1.00 2016.10.19 - Initial release
 ;
 ;-------------------------------------------------------------------------------------------------------------------
@@ -209,7 +224,7 @@ MIDI_VELOCITY:
 			; Velocity controlled resonance accent > 80
 			lds		r16, MIDIVELOCITY
 			lds		r17, RESONANCE
-			cpi		r16, 80
+			cpi		r16, 100
 			brlo	NO_ACCENT
 			lds		r16, ACCENT
 			add		r17, r16	

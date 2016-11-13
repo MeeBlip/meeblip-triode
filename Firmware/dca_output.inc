@@ -16,6 +16,11 @@
 MLP_VCAENV:
             lds	    r16, ENV_INTEGR		
 
+; added the non-linear vca envelope lookup
+			ldi		r30, low( TAB_VCA)	;\
+			ldi		r31, high( TAB_VCA)	;/ Z = &Tab
+			rcall	TAB_BYTE			; r0 = 2..255 (load LEVEL into r16)
+
 MLP_VCAOK:
 			sts		LEVEL,r16
 

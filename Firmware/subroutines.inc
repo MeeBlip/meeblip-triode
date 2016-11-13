@@ -123,46 +123,48 @@ SHL32_EXIT:
 ;Out:	r19:r18:r17:r16 = x * y	0..2^32-1
 ;Used:	SREG,r20-r29
 ;-----------------------------------------------------------------------------
+; AWE's code
 MUL32X16:
+	push	r30
+	clr	r20			;\
+	clr	r21			;/ XX = x
+	clr	r24			;\
+	clr	r25			; \
+	clr	r26			;  \
+	clr	r27			;  / ZZ = 0
+	clr	r28			; /
+	clr	r29			;/
+	rjmp	M3216_CHECK
 
-; multiply with high multiplier x
-		mul		r19, r23		; ax
-		movw	r29:r28, r1:r0
-		mul		r18, r23		; bx
-		movw	r21:r20, r1:r0
-		mul		r17, r23		; cx
-		movw	r27:r26, r1:r0
-		mul		r16, r23		; dx
-		mov		r25, r0
-		add		r26, r1
-		adc		r27, r20
-		adc		r28, r21
-		adc		r29, ZERO
-; multiply with low multiplier y
-		mul		r19, r22		; ay
-		movw	r21:r20, r1:r0
-		mul		r17, r22		; cy
-		add		r25, r0
-		adc		r26, r1
-		adc		r27, r20
-		adc		r28, r21
-		adc		r29, ZERO
-		mul		r18, r22		; by
-		movw	r21:r20, r1:r0
-		mul		r16, r22		; dy
-		mov		r24, r0
-		add		r25, r1
-		adc		r26, r20
-		adc		r27, r21
-		adc		r28, ZERO
-		adc		r29, ZERO
+M3216_LOOP:
+	lsr	r23			;\
+	ror	r22			;/ y:Carry = y >> 1
+	brcc	M3216_SKIP
+	add	r24,r16			;\
+	adc	r25,r17			; \
+	adc	r26,r18			;  \
+	adc	r27,r19			;  / ZZ = ZZ + XX
+	adc	r28,r20			; /
+	adc	r29,r21			;/
 
-		mov		r16,r26			;\
-		mov		r17,r27			; \
-		mov		r18,r28			; / x * y
-		mov		r19,r29			;/
+M3216_SKIP:
+	lsl	r16			;\
+	rol	r17			; \
+	rol	r18			;  \
+	rol	r19			;  / YY = YY << 1
+	rol	r20			; /
+	rol	r21			;/
 
-		ret
+M3216_CHECK:
+	mov	r30,r22			;\
+	or	r30,r23			;/ check if y == 0
+	brne	M3216_LOOP
+	mov	r16,r26			;\
+	mov	r17,r27			; \
+	mov	r18,r28			; / x * y
+	mov	r19,r29			;/
+	pop	r30
+	ret
 ;-----------------------------------------------------------------------------
 ; Load 32 bit phase value from ROM
 ;- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -480,7 +482,7 @@ POT_SCAN:
 			brpl	DEAD_CHECK
 			neg		r19		
 DEAD_CHECK:
-			cpi		r19, 2				 
+			cpi		r19, 3				; deadzone replace with KNOB_DEADZONE variable
 			brlo	NO_CHANGE			; Skip ahead if pot change is < the deadzone limit
 			sbr 	r18,1				; Update knob status bit and continue -- pot moved
 			ldi		r28, low(KNOB0_STATUS)

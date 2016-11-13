@@ -85,6 +85,8 @@ MLP_BOTTOM:
 		    ldi	    r21, 0			    ;/
 		    ldi	    r16, 0			    ; stop
 
+			sts		OSC_GATE, r16		; Turn off oscillators (Store 0 in OSC_GATE)
+
 MLP_ESTOREP:
             sts	ENVPHASE, r16		    ; store phase
 

@@ -38,7 +38,7 @@ MLP_DCF:
 			mov		r30, r1
 			ldi		r31, 0
 			rol		r1					; r1.7 --> Cy (sign)
-			sbc		r31, r31			; sign extension to r31
+			sbc		r31, r31			; sign extension to r31 
 
 MLP_DCF0:
 
@@ -83,7 +83,7 @@ MLP_Q1:
 		    ldi	    r18, 255
 
 MLP_Q2:
-			sts		ACCENTED_REZ, r18	; Resonance with velocity env mod
+			sts		ACCENTED_REZ, r18	; Resonance with velocity env mod 
 
 ;CUTOFF:
 		    lds	    r16, CUTOFF
@@ -102,18 +102,20 @@ MLP_DCF1:
 MLP_DCF2:
 
 mlp_cutoff:
+
 			lsr	    r16			        ; 0..127
-			mov		r17, r16			; Copy unscaled cutoff to r17
-			ldi		r30, low( TAB_VCF)	;\
-			ldi		r31, high( TAB_VCF)	;/ Z = &Tab
-			rcall	TAB_BYTE		; r16 = 1.. 255
-			sts		LPF_I, r16		; Store Lowpass F value (from exponential table)
+			;mov		r17, r16			; Copy unscaled cutoff to r17
+			;ldi		r30, low( TAB_VCF)	;\
+			;ldi		r31, high( TAB_VCF)	;/ Z = &Tab
+			;rcall	TAB_BYTE		; r16 = 1.. 255
+			;sts		LPF_I, r16		; Store Lowpass F value (from exponential table)
 
 mlp_output_cutoff:
 
-			mov		r16, r17		; Copy unscaled cutoff back to r16
-			ldi		r30, low( TAB_VCF2)	;\
-			ldi		r31, high( TAB_VCF2)	;/ Z = &Tab
+; Was TAB_VCF2
+			;mov		r16, r17		; Copy unscaled cutoff back to r16
+			ldi		r30, low( TAB_VCF)	;\
+			ldi		r31, high( TAB_VCF)	;/ Z = &Tab
 
 			rcall	TAB_BYTE		; r16 = 1.. 255
 			out     OCr2, r16		; load Cutoff value into PWM counter

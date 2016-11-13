@@ -55,8 +55,11 @@ MLP_KEYON:
 
 MLP_KEYON1:
 
-;envelope starts:	   
+;envelope starts:
 			ldi		r16, 1
+
+			sts		OSC_GATE, r16		; Turn on oscillators (Store 1 in OSC_GATE)
+
 		    sts	    ENVPHASE, r16		; attack
 			sts		ENVPHASE2, r16		; attack for envelope 2
 
