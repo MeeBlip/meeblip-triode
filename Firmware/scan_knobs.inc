@@ -215,14 +215,17 @@ CHECK_6:
 
 CHECK_6B:
 			lds	    r16, KNOB_DCF_DECAY 		; Grab the value, in case it hasn't been updated (IE: MIDI CC parameter update)
-			;lds		r19, PATCH_SWITCH1	
-			;sbrs	r19, SW_SUSTAIN			
-			;rjmp	DCF_SUSTAIN_OFF				; Skip if sustain is off...
-			;ldi		r19, 255					; Sustain is on, so...
-			;sts		SUSTAINLEVEL2, r19			; Set sustain to maximum
-			;sts		DECAYTIME2, r19				; Set decay to maximum
-			;sts		RELEASETIME2, r16			; Set release time to value of decay knob
-			;rjmp	END_POTS
+
+			; xyzzy comment this out to change the sustain behaviour
+			lds		r19, PATCH_SWITCH1	
+			sbrs	r19, SW_SUSTAIN			
+			rjmp	DCF_SUSTAIN_OFF				; Skip if sustain is off...
+			ldi		r19, 255					; Sustain is on, so...
+			sts		SUSTAINLEVEL2, r19			; Set sustain to maximum
+			sts		DECAYTIME2, r19				; Set decay to maximum
+			sts		RELEASETIME2, r16			; Set release time to value of decay knob
+			rjmp	END_POTS
+			; xyzzy end sustain
 
 DCF_SUSTAIN_OFF:
 			ldi		r19, 0						; Sustain is off, so...		

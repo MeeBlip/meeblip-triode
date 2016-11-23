@@ -12,6 +12,7 @@
 ;
 ;Change log
 ;
+;V1.11 2016.11.23 - Reverted filter decay envelope to use SUSTAIN switch, as in original release
 ;V1.10 2016.11.12 - Updated MIDI code to exit interrupt immediately if MIDI command is unrecognized
 ;				  - Increased front panel switch scanning rate (10X faster)
 ;				  - Reduced pitchbend to ± 3 semitones

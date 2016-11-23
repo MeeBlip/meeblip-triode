@@ -104,16 +104,22 @@ MLP_DCF2:
 mlp_cutoff:
 
 			lsr	    r16			        ; 0..127
-			;mov		r17, r16			; Copy unscaled cutoff to r17
-			;ldi		r30, low( TAB_VCF)	;\
-			;ldi		r31, high( TAB_VCF)	;/ Z = &Tab
-			;rcall	TAB_BYTE		; r16 = 1.. 255
-			;sts		LPF_I, r16		; Store Lowpass F value (from exponential table)
+
+			; xyzzy digital VCF prefilter
+			/*
+			mov		r17, r16			; Copy unscaled cutoff to r17
+			ldi		r30, low( TAB_VCF)	;\
+			ldi		r31, high( TAB_VCF)	;/ Z = &Tab
+			rcall	TAB_BYTE		; r16 = 1.. 255
+			sts		LPF_I, r16		; Store Lowpass F value (from exponential table)
+			*/
+			; xyxxy end digital VCF prefilter
 
 mlp_output_cutoff:
 
 ; Was TAB_VCF2
-			;mov		r16, r17		; Copy unscaled cutoff back to r16
+			;mov		r16, r17		; Copy unscaled cutoff back to r16 (xyzzy - remove if digital VCF prefilter is disabled)
+
 			ldi		r30, low( TAB_VCF)	;\
 			ldi		r31, high( TAB_VCF)	;/ Z = &Tab
 
