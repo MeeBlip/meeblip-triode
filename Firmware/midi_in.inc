@@ -23,14 +23,10 @@ UART_RXC:
 ; Exit UART interrupt immediately if received MIDI value => $F0
 			cpi		r16, $F0			; ignore active sensing, midi clocks, sysex
 			brlo	INTRX_PROCESS
-			ldi		r16, 0
-			sts	    MIDIPHASE, r16		; MIDIPHASE = 0
-			;sei				            ; enable other interrupts
-			rjmp	INTRX_EXIT			; quit UART loop as quickly as possible
+			rjmp	INTRX_EXIT			    ; quit UART loop as quickly as possible
+
 
 INTRX_PROCESS:
-; end
-			;sei				            ; enable other interrupts
 		    tst	    r16		            ;\ jump when
 		    brpl	INTRX_DATA		    ;/ r16.7 == 0 (MIDI data byte)
 
@@ -70,9 +66,7 @@ INTRX_ACPT_X:
 
 ;MIDI data byte (0xxxxxxx):
 INTRX_DATA:
-            lds	    r17, MIDIPHASE
-			tst		r17					; Check if MIDIPHASE is zero. If so, exit immediately
-			breq	INTRX_ACPT_X		; Which will jump us to INTRX_EXIT
+			lds	    r17, MIDIPHASE
 
 		    cpi	    r17, 0x80		    ;\
 		    breq	INTRX_NOFF1		    ; \

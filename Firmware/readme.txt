@@ -10,6 +10,8 @@
 ---------------------------------------------------------------------------------------------------
 
 Change log
+V1.20 2017.02.27 
+- MIDI fix so that triode plays nicely with MIDI clock
 
 V1.11 2016.11.23
 - Reverted filter decay envelope to use SUSTAIN switch, as in original release 
